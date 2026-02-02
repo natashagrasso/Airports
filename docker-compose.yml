@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Base de datos
+  mongo:
+    image: mongo:6.0
+    container_name: aeropuertos_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - red_aeropuertos
+
+  # Redis
+  redis-geo:
+    image: redis:7.0-alpine
+    container_name: aeropuertos_redis_geo
+    ports:
+      - "6379:6379"
+    networks:
+      - red_aeropuertos
+
+  redis-pop:
+    image: redis:7.0-alpine
+    container_name: aeropuertos_redis_pop
+    ports:
+      - "6380:6379"
+    networks:
+      - red_aeropuertos
+
+  # Backend
+  backend:
+    build: ./backend
+    container_name: aeropuertos_backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+      - redis-geo
+      - redis-pop
+    volumes:
+      - ./data:/app/data
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/airport_db
+      - REDIS_GEO_HOST=redis-geo
+      - REDIS_POP_HOST=redis-pop
+    networks:
+      - red_aeropuertos
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: aeropuertos_frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+    networks:
+      - red_aeropuertos
+
+volumes:
+  mongo_data:
+
+networks:
+  red_aeropuertos:
+    driver: bridge

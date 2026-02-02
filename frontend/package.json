@@ -1,0 +1,11 @@
+{
+  "name": "aeropuertos-frontend",
+  "version": "1.0.0",
+  "main": "server-front.js",
+  "scripts": {
+    "start": "node server-front.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

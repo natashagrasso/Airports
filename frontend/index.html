@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aeropuertos</title>
+    
+    <!-- Leaflet & Clustering -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <!-- Iconos de Aviones (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; overflow: hidden; }
+        #map { height: 100vh; width: 100%; z-index: 1; }
+        
+        /* Paneles flotantes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            position: absolute;
+            z-index: 1000;
+        }
+
+        h4 { margin: 0 0 10px 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+
+        /* Posiciones */
+        #search-box { top: 20px; left: 60px; display: flex; gap: 5px; }
+        #popularity-panel { top: 20px; right: 20px; width: 220px; max-height: 250px; overflow-y: auto; }
+        #admin-panel { bottom: 30px; right: 20px; width: 250px; }
+        #info-box { bottom: 30px; left: 20px; padding: 10px; font-size: 12px; color: #666; }
+
+        /* Inputs y Botones */
+        input { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        button { 
+            width: 100%; padding: 8px; margin-bottom: 5px; cursor: pointer; 
+            border: none; border-radius: 6px; font-weight: 600; color: white;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+
+        .btn-create { background: #27ae60; }
+        .btn-update { background: #f39c12; display: none; }
+        .btn-cancel { background: #95a5a6; display: none; }
+        .btn-search { width: 40px !important; background: #3498db; margin:0; }
+
+        /* Icono de avión en mapa */
+        .custom-icon {
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Buscador -->
+    <div id="search-box" class="glass-panel">
+        <input type="text" id="search-input" placeholder="Buscar código..." style="margin:0; width:150px;">
+        <button onclick="buscarAeropuerto()" class="btn-search"><i class="fas fa-search"></i></button>
+    </div>
+
+    <!-- 2. Ranking -->
+    <div id="popularity-panel" class="glass-panel">
+        <h4><i class="fas fa-chart-bar"></i> Top Visitados</h4>
+        <div id="ranking-list" style="font-size:0.9em; color:#555;">Cargando...</div>
+    </div>
+
+    <!-- 3. Admin CRUD -->
+    <div id="admin-panel" class="glass-panel">
+        <h4><i class="fas fa-tools"></i> Administrar</h4>
+        <input type="hidden" id="edit-code"> <!-- ID oculto para editar -->
+        
+        <input type="text" id="name" placeholder="Nombre Aeropuerto">
+        <input type="text" id="code" placeholder="Código (IATA/ICAO)">
+        <div style="display:flex; gap:5px;">
+            <input type="number" id="lat" placeholder="Lat" step="any">
+            <input type="number" id="lng" placeholder="Lng" step="any">
+        </div>
+
+        <button id="btn-create" class="btn-create" onclick="guardarAeropuerto('POST')">
+            <i class="fas fa-plus"></i> Guardar Nuevo
+        </button>
+        <button id="btn-update" class="btn-update" onclick="guardarAeropuerto('PUT')">
+            <i class="fas fa-save"></i> Actualizar
+        </button>
+        <button id="btn-cancel" class="btn-cancel" onclick="cancelarEdicion()">
+            Cancelar
+        </button>
+    </div>
+
+    <!-- 4. Info Estado -->
+    <div id="info-box" class="glass-panel">
+        <span id="info"><i class="fas fa-database"></i> Conectando...</span><br>
+        Clic Derecho: Buscar Cercanos
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
