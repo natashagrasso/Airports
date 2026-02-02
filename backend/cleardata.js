@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-// Rutas actualizadas para data_transport.json
+// Rutas actualizada para data_transport.json
 const rutaOriginal = path.join(__dirname, '..', 'data', 'data_transport.json')
 const rutaLimpia = path.join(
   __dirname,

@@ -259,7 +259,7 @@ window.cancelarEdicion = () => {
   document.getElementById('btn-cancel').style.display = 'none'
 }
 
-// CLIC DERECHO (BuSQUEDA GEOESPACIAL)
+// CLIC DERECHO , busqueda geoespacial
 map.on('contextmenu', async e => {
   const { lat, lng } = e.latlng
 

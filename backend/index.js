@@ -20,7 +20,7 @@ const redisPop = redis.createClient({ url: REDIS_POP_URL })
 redisGeo.on('error', err => console.log('❌ Error en Redis GEO:', err))
 redisPop.on('error', err => console.log('❌ Error en Redis Popularidad:', err))
 
-// Iniciamos .
+// Iniciamos
 async function connectServices() {
   try {
     await mongoose.connect(MONGO_URI)
